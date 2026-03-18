@@ -1,0 +1,119 @@
+:root {
+    --bg-color: #424242;
+    --card-bg: #a7a7a7;
+    --text-main: #ececec;
+    --text-sub: #ececec;
+    --accent: #8dc4ff;
+    --radius: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* 畫布層 */
+#rippleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    cursor: crosshair;
+}
+
+.container {
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    z-index: 1;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 40px 30px;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/* 3D 旋轉大頭照 */
+.profile-wrapper {
+    perspective: 1000px;
+    margin-bottom: 20px;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #eee;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-img:hover {
+    transform: rotateY(20deg) rotateX(10deg) scale(1.1);
+}
+
+.name {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.bio {
+    font-size: 0.95rem;
+    color: var(--text-sub);
+    line-height: 1.6;
+    margin-bottom: 30px;
+    min-height: 3em;
+}
+
+/* 社群按鈕 */
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn {
+    text-decoration: none;
+    color: var(--text-main);
+    padding: 12px;
+    border: 1px solid #e9e9e8;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.btn:hover {
+    background-color: #f1f1f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+/* 手機響應式調整 */
+@media (max-width: 480px) {
+    .card {
+        padding: 30px 20px;
+    }
+
+    .profile-img {
+        width: 100px;
+        height: 100px;
+    }
+}
