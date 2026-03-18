@@ -5,7 +5,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>數位名片 | Digital Business Card</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+:root {
+    --bg-color: #424242;
+    --card-bg: #a7a7a7;
+    --text-main: #646464;
+    --text-sub: #444343;
+    --accent: #8dc4ff;
+    --radius: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 畫布層 */
+#rippleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    cursor: crosshair;
+}
+
+.container {
+    padding: 40px 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    z-index: 1;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 40px 30px;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/* 3D 旋轉大頭照 */
+.profile-wrapper {
+    perspective: 1000px;
+    margin-bottom: 20px;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #eee;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-img:hover {
+    transform: rotateY(20deg) rotateX(10deg) scale(1.1);
+}
+
+.name {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.bio {
+    font-size: 0.95rem;
+    color: var(--text-sub);
+    line-height: 1.6;
+    margin-bottom: 30px;
+    min-height: 3em;
+}
+
+/* 社群按鈕 */
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn {
+    text-decoration: none;
+    color: var(--text-main);
+    padding: 12px;
+    border: 1px solid #e9e9e8;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.btn:hover {
+    background-color: #f1f1f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+/* 手機響應式調整 */
+@media (max-width: 480px) {
+    .card {
+        padding: 30px 20px;
+    }
+
+    .profile-img {
+        width: 100px;
+        height: 100px;
+    }
+}
+    </style>
 </head>
 
 <body>
@@ -14,7 +133,8 @@
     <main class="container">
         <div class="card">
             <div class="profile-wrapper">
-                <img src="./img/Profile.png" alt="Profile Photo" class="profile-img">
+                <img src="https://i.pinimg.com/736x/52/c5/8f/52c58fc86fad94aa2d4fbf72209e75b7.jpg" alt="Profile Photo"
+                    class="profile-img">
             </div>
 
             <h1 class="name">林子又</h1>
@@ -30,7 +150,69 @@
         </div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+const canvas = document.getElementById('rippleCanvas');
+const ctx = canvas.getContext('2d');
+
+let ripples = [];
+
+// 調整畫布大小
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+class Ripple {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.r = 0; // 半徑
+        this.opacity = 1;
+        this.velocity = 2; // 擴散速度
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 122, 255, ${this.opacity})`; // 使用藍色調
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    update() {
+        this.r += this.velocity;
+        this.opacity -= 0.02; // 逐漸消失
+    }
+}
+
+function animate() {
+    // 每一幀稍微清除畫面，創造殘影或保持乾淨
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ripples.forEach((ripple, index) => {
+        ripple.update();
+        ripple.draw();
+
+        // 刪除透明度為 0 的漣漪
+        if (ripple.opacity <= 0) {
+            ripples.splice(index, 1);
+        }
+    });
+
+    requestAnimationFrame(animate);
+}
+
+// 點擊事件觸發
+window.addEventListener('mousedown', (e) => {
+    ripples.push(new Ripple(e.clientX, e.clientY));
+});
+
+animate();
+    </script>
 </body>
 
 </html>
